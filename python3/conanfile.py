@@ -7,12 +7,17 @@ class PythonConan(ConanFile):
     license = "MIT"
     author = "Martyn Gigg <martyn.gigg@gmail.com>"
     description = "Official interpreter of Python language"
+    url = "https://github.com/martyngigg/conan-recipes.git"
     topics = ("cpython",)
     settings = "os", "compiler", "build_type", "arch"
     options = {}
     default_options = {}
     generators = "make"
-    build_requires = "zlib/1.2.11@conan/stable", "OpenSSL/1.1.1c@conan/stable"
+    build_requires = (\
+      "zlib/1.2.11@conan/stable",
+      "OpenSSL/1.1.1c@conan/stable",
+      "libffi/3.2.1@bincrafters/stable"
+    )
 
     def source(self):
         source_url = "https://www.python.org/ftp/python/"
