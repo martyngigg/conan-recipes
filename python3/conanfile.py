@@ -8,7 +8,7 @@ class PythonConan(ConanFile):
     author = "Martyn Gigg <martyn.gigg@gmail.com>"
     description = "Official interpreter of Python language"
     url = "https://github.com/martyngigg/conan-recipes.git"
-    topics = ("cpython",)
+    topics = ("cpython", )
     settings = "os", "compiler", "build_type", "arch"
     options = {}
     default_options = {}
@@ -19,28 +19,34 @@ class PythonConan(ConanFile):
       "libffi/3.2.1@bincrafters/stable"
     )
 
+    # Private variables
+    _build_vars = ""
+
     def source(self):
         source_url = "https://www.python.org/ftp/python/"
-        tools.get(source_url + "{version}/Python-{version}.tar.xz".format(version=self.version))
+        tools.get(source_url + "{version}/Python-{version}.tar.xz".format(
+            version=self.version))
 
     def build(self):
         autotools = AutoToolsBuildEnvironment(self)
+        build_vars = autotools.vars
+        build_vars["LDFLAGS"] += " -Wl,-rpath,'$$ORIGIN/../lib'"
+        self._build_vars = build_vars
         flags = [
-            "--enable-shared",
-            "--enable-ipv6",
+            "--enable-shared", "--enable-ipv6",
             "--enable-loadable-sqlite-extensions",
-            "--with-dbmliborder=bdb:gdbm",
-            "--with-computed-gotos",
+            "--with-dbmliborder=bdb:gdbm", "--with-computed-gotos",
             "--without-ensurepip",
             "--with-openssl={}".format(self.deps_cpp_info["OpenSSL"].rootpath)
         ]
         autotools.configure(configure_dir="Python-{}".format(self.version),
-                            args=flags)
-        autotools.make()
+                            args=flags,
+                            vars=build_vars)
+        autotools.make(vars=build_vars)
 
     def package(self):
         autotools = AutoToolsBuildEnvironment(self)
-        autotools.make(target='install')
+        autotools.make(target='install', vars=self._build_vars)
 
     def package_info(self):
         # TODO: What should be provided here?
