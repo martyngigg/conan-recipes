@@ -14,8 +14,8 @@ class PythonConan(ConanFile):
     default_options = {}
     generators = "make"
     build_requires = (\
-      "zlib/1.2.11@conan/stable",
-      "OpenSSL/1.1.1c@conan/stable",
+      "zlib/1.2.11",
+      "openssl/1.1.1d@_/_",
       "libffi/3.2.1@bincrafters/stable"
     )
 
@@ -37,7 +37,7 @@ class PythonConan(ConanFile):
             "--enable-loadable-sqlite-extensions",
             "--with-dbmliborder=bdb:gdbm", "--with-computed-gotos",
             "--without-ensurepip",
-            "--with-openssl={}".format(self.deps_cpp_info["OpenSSL"].rootpath)
+            "--with-openssl={}".format(self.deps_cpp_info["openssl"].rootpath)
         ]
         autotools.configure(configure_dir="Python-{}".format(self.version),
                             args=flags,
