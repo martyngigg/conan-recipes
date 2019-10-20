@@ -46,8 +46,10 @@ class PythonConan(ConanFile):
 
     def package(self):
         autotools = AutoToolsBuildEnvironment(self)
-        autotools.make(target='install', vars=self._build_vars)
+        autotools.make(target="install", vars=self._build_vars)
 
     def package_info(self):
-        # TODO: What should be provided here?
-        pass
+        major_version, minor_version = self.version.split(".")[0:2]
+        python_x_y = "python{}.{}".format(major_version, minor_version)
+        self.cpp_info.includedirs = ["include/" + python_x_y]
+        self.cpp_info.libs = ["lib{}.so".format(python_x_y)]
